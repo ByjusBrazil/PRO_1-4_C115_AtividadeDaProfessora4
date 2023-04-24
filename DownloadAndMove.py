@@ -8,8 +8,8 @@ import shutil
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-from_dir = "C:/Users/preet/Downloads"              # Adicione o caminho da sua pasta "Downloads".
-to_dir = "C:/Users/preet/Desktop/Arquivos_Documentos" # Crie a pasta "Arquivos_Documentos" em sua área de trabalho e atualize o caminho de acordo.
+from_dir = "C:/Users/HP/Downloads"              # Adicione o caminho da sua pasta "Downloads".
+to_dir = "C:/Users/HP/Desktop/download_files" # Crie a pasta "Arquivos_Documentos" em sua área de trabalho e atualize o caminho de acordo.
 
 
 dir_tree = {
@@ -36,23 +36,32 @@ class FileMovementHandler(FileSystemEventHandler):
 
                 file_name = os.path.basename(event.src_path)
                
-                print("Baixado " + file_name)
+                print("Downloaded " + file_name)
 
                 path1 = from_dir + '/' + file_name
                 path2 = to_dir + '/' + key
                 path3 = to_dir + '/' + key + '/' + file_name
 
                 if os.path.exists(path2):
-
-                    print("Diretório Existe...")
-                    print("Movendo " + file_name + "....")
-                    shutil.move(path1, path3)
+                    print("Directory Exists...") 
                     time.sleep(1)
+                    if os.path.exists(path3):
+                        print("File Already Exists in " + key + "....")
+                        print("Renaming File" + file_name +"....")
+                        new_file_name = os.path.splitext(file_name)[0] + str(random.randint(0, 999)) + os.path.splitext(file_name)[1]
+                        path4 = to_dir + '/' + key + '/' + new_file_name
+                        print("Moving "+ new_file_name + "...")
+                        shutil.move(path1, path4)
+                        time.sleep(1)
+                    else:
+                        print("Moving " + file_name + "....")
+                        shutil.move(path1, path3)
+                        time.sleep(1)
 
                 else:
-                    print("Criando Diretório...")
+                    print("Making Directory...")
                     os.makedirs(path2)
-                    print("Movendo " + file_name + "....")
+                    print("Moving " + file_name + "....")
                     shutil.move(path1, path3)
                     time.sleep(1)
 
@@ -71,7 +80,7 @@ observer.start()
 try:
     while True:
         time.sleep(2)
-        print("executando...")
+        print("running...")
 except KeyboardInterrupt:
-    print("interrompido!")
+    print("stopped!")
     observer.stop()
